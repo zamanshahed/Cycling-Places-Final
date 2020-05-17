@@ -53,7 +53,7 @@ const Auth = () => {
             value: '',
             isValid: false
           },
-          image:{
+          image: {
             value: null,
             isValid: false
           }
@@ -126,7 +126,14 @@ const Auth = () => {
               />
             )}
 
-            {!isLoginMode && <ImageUpload center id="image" onInput={inputHandler} />}
+            {!isLoginMode &&
+              <ImageUpload
+                center
+                id="image"
+                onInput={inputHandler}
+                errorText="Please Select an image!"
+              />
+            }
 
             <Input
               element="input"
