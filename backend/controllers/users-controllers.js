@@ -52,13 +52,13 @@ const signup = async (req, res, next) => {
   } catch (err) {
     const error = new HttpError('Could not create user: hashedPassError!', 500);
     return next(error);
-  }  
+  }
 
   const createdUser = new User({
     name,
     email,
     image: req.file.path,
-    password: hashedPassword, 
+    password: hashedPassword,
     places: []
   });
 
@@ -90,7 +90,7 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  if (!existingUser || existingUser.password !== password) {
+  if (!existingUser) {
     const error = new HttpError(
       'Invalid credentials, could not log you in.',
       401
@@ -98,7 +98,14 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  res.json({ message: 'Logged in!', user: existingUser.toObject({getters:true}) });
+  let isValidPassword = false;
+  try {
+    isValidPassword = await bcrypt.compare(password, existingUser.password);
+  } catch (err) {
+    const error = new HttpError('Error: Could not log you in, please check credentials and try again.', 500);
+  }
+
+  res.json({ message: 'Logged in!', user: existingUser.toObject({ getters: true }) });
 };
 
 exports.getUsers = getUsers;
